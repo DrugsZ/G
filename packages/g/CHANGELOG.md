@@ -1,5 +1,51 @@
 # @antv/g
 
+## 5.18.8
+
+### Patch Changes
+
+-   Updated dependencies [70aa0b32]
+-   Updated dependencies [789bd4c9]
+    -   @antv/g-web-animations-api@1.2.7
+    -   @antv/g-camera-api@1.2.7
+    -   @antv/g-lite@1.2.7
+    -   @antv/g-dom-mutation-observer-api@1.2.7
+
+## 5.18.7
+
+### Patch Changes
+
+-   Updated dependencies [1b0901ba]
+-   Updated dependencies [1b0901ba]
+-   Updated dependencies [1b0901ba]
+-   Updated dependencies [1b0901ba]
+-   Updated dependencies [1b0901ba]
+    -   @antv/g-lite@1.2.6
+    -   @antv/g-camera-api@1.2.6
+    -   @antv/g-dom-mutation-observer-api@1.2.6
+    -   @antv/g-web-animations-api@1.2.6
+
+## 5.18.6
+
+### Patch Changes
+
+-   Updated dependencies [ff2f4585]
+-   Updated dependencies [6fa21f84]
+    -   @antv/g-lite@1.2.5
+    -   @antv/g-camera-api@1.2.5
+    -   @antv/g-dom-mutation-observer-api@1.2.5
+    -   @antv/g-web-animations-api@1.2.5
+
+## 5.18.5
+
+### Patch Changes
+
+-   Updated dependencies [6757ccbd]
+    -   @antv/g-lite@1.2.4
+    -   @antv/g-camera-api@1.2.4
+    -   @antv/g-dom-mutation-observer-api@1.2.4
+    -   @antv/g-web-animations-api@1.2.4
+
 ## 5.18.4
 
 ### Patch Changes

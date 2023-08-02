@@ -1,5 +1,89 @@
 # @antv/g-webgl
 
+## 1.9.10
+
+### Patch Changes
+
+-   Updated dependencies [d9e769f2]
+-   Updated dependencies [d9e769f2]
+-   Updated dependencies [d9e769f2]
+    -   @antv/g-plugin-device-renderer@1.9.9
+    -   @antv/g-plugin-webgl-device@1.9.9
+
+## 1.9.9
+
+### Patch Changes
+
+-   Updated dependencies [d64c8b03]
+    -   @antv/g-plugin-html-renderer@1.9.8
+
+## 1.9.8
+
+### Patch Changes
+
+-   Updated dependencies [06bcc557]
+    -   @antv/g-plugin-device-renderer@1.9.8
+    -   @antv/g-plugin-webgl-device@1.9.8
+
+## 1.9.7
+
+### Patch Changes
+
+-   70aa0b32: Retrieve runtime from context instead of global.
+-   789bd4c9: Split a path containing multiple segments into subpaths.
+-   Updated dependencies [70aa0b32]
+-   Updated dependencies [789bd4c9]
+    -   @antv/g-plugin-device-renderer@1.9.7
+    -   @antv/g-plugin-html-renderer@1.9.7
+    -   @antv/g-plugin-image-loader@1.3.7
+    -   @antv/g-plugin-webgl-device@1.9.7
+    -   @antv/g-lite@1.2.7
+    -   @antv/g-plugin-dom-interaction@1.9.7
+
+## 1.9.6
+
+### Patch Changes
+
+-   Updated dependencies [1b0901ba]
+-   Updated dependencies [1b0901ba]
+-   Updated dependencies [1b0901ba]
+-   Updated dependencies [1b0901ba]
+-   Updated dependencies [1b0901ba]
+-   Updated dependencies [1b0901ba]
+-   Updated dependencies [1b0901ba]
+    -   @antv/g-plugin-device-renderer@1.9.6
+    -   @antv/g-lite@1.2.6
+    -   @antv/g-plugin-webgl-device@1.9.6
+    -   @antv/g-plugin-dom-interaction@1.9.6
+    -   @antv/g-plugin-html-renderer@1.9.6
+    -   @antv/g-plugin-image-loader@1.3.6
+
+## 1.9.5
+
+### Patch Changes
+
+-   Updated dependencies [ff2f4585]
+-   Updated dependencies [6fa21f84]
+    -   @antv/g-plugin-device-renderer@1.9.5
+    -   @antv/g-lite@1.2.5
+    -   @antv/g-plugin-webgl-device@1.9.5
+    -   @antv/g-plugin-dom-interaction@1.9.5
+    -   @antv/g-plugin-html-renderer@1.9.5
+    -   @antv/g-plugin-image-loader@1.3.5
+
+## 1.9.4
+
+### Patch Changes
+
+-   Updated dependencies [6757ccbd]
+-   Updated dependencies [6757ccbd]
+    -   @antv/g-plugin-device-renderer@1.9.4
+    -   @antv/g-lite@1.2.4
+    -   @antv/g-plugin-webgl-device@1.9.4
+    -   @antv/g-plugin-dom-interaction@1.9.4
+    -   @antv/g-plugin-html-renderer@1.9.4
+    -   @antv/g-plugin-image-loader@1.3.4
+
 ## 1.9.3
 
 ### Patch Changes

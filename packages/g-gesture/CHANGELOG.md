@@ -1,5 +1,51 @@
 # @antv/g-gesture
 
+## 2.2.9
+
+### Patch Changes
+
+-   5d384146: Revert stopPropagation in g-gesture
+
+## 2.2.8
+
+### Patch Changes
+
+-   d9e769f2: Stop propagation in g-gesture.
+
+## 2.2.7
+
+### Patch Changes
+
+-   Updated dependencies [70aa0b32]
+-   Updated dependencies [789bd4c9]
+    -   @antv/g-lite@1.2.7
+
+## 2.2.6
+
+### Patch Changes
+
+-   Updated dependencies [1b0901ba]
+-   Updated dependencies [1b0901ba]
+-   Updated dependencies [1b0901ba]
+-   Updated dependencies [1b0901ba]
+-   Updated dependencies [1b0901ba]
+    -   @antv/g-lite@1.2.6
+
+## 2.2.5
+
+### Patch Changes
+
+-   Updated dependencies [ff2f4585]
+-   Updated dependencies [6fa21f84]
+    -   @antv/g-lite@1.2.5
+
+## 2.2.4
+
+### Patch Changes
+
+-   Updated dependencies [6757ccbd]
+    -   @antv/g-lite@1.2.4
+
 ## 2.2.3
 
 ### Patch Changes

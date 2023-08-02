@@ -90,13 +90,13 @@ class Gesture extends EventEmitter {
       el.ownerDocument?.defaultView.addEventListener('pointermove', this._move);
     } else {
       el.isMutationObserved = true;
-      el.on(ElementEvent.MOUNTED, (e) =>
+      el.on(ElementEvent.MOUNTED, (e) => {
         el.ownerDocument?.defaultView.addEventListener(
           'pointermove',
           // @ts-ignore
           this._move,
-        ),
-      );
+        );
+      });
     }
 
     el.addEventListener('pointerdown', this._start);
@@ -105,10 +105,10 @@ class Gesture extends EventEmitter {
       // @ts-ignore
       el.ownerDocument?.defaultView.addEventListener('pointerup', this._end);
     } else {
-      el.on(ElementEvent.MOUNTED, (e) =>
+      el.on(ElementEvent.MOUNTED, (e) => {
         // @ts-ignore
-        el.ownerDocument?.defaultView.addEventListener('pointerup', this._end),
-      );
+        el.ownerDocument?.defaultView.addEventListener('pointerup', this._end);
+      });
     }
 
     el.addEventListener('pointercancel', this._cancel);

@@ -3,12 +3,12 @@ import {
   Instanced,
   VertexAttributeBufferIndex,
   VertexAttributeLocation,
-} from '../meshes/Instanced';
+} from './Instanced';
 import { Format, VertexBufferFrequency } from '../platform';
 import frag from '../shader/image.frag';
 import vert from '../shader/image.vert';
 
-export class ImageMesh extends Instanced {
+export class ImageDrawcall extends Instanced {
   shouldMerge(object: DisplayObject, index: number) {
     const shouldMerge = super.shouldMerge(object, index);
 
@@ -45,25 +45,13 @@ export class ImageMesh extends Instanced {
     super.createGeometry(objects);
 
     const instanced: number[] = [];
-    const interleaved: number[] = [];
-    const indices: number[] = [];
     objects.forEach((object, i) => {
       const image = object as ImageShape;
-      const offset = i * 4;
       const { width, height, z, isBillboard } = image.parsedStyle;
       instanced.push(width, height, z, isBillboard ? 1 : 0);
-      interleaved.push(0, 0, 1, 0, 1, 1, 0, 1);
-      indices.push(
-        0 + offset,
-        2 + offset,
-        1 + offset,
-        0 + offset,
-        3 + offset,
-        2 + offset,
-      );
     });
 
-    this.geometry.setIndexBuffer(new Uint32Array(indices));
+    this.geometry.setIndexBuffer(new Uint32Array([0, 2, 1, 0, 3, 2]));
     this.geometry.vertexCount = 6;
     this.geometry.setVertexBuffer({
       bufferIndex: VertexAttributeBufferIndex.POSITION,
@@ -89,7 +77,7 @@ export class ImageMesh extends Instanced {
           location: VertexAttributeLocation.UV,
         },
       ],
-      data: new Float32Array(interleaved),
+      data: new Float32Array([0, 0, 1, 0, 1, 1, 0, 1]),
     });
   }
 

@@ -20,6 +20,10 @@ import type GlyphAtlas from './symbol/GlyphAtlas';
 import { BASE_FONT_WIDTH, GlyphManager } from './symbol/GlyphManager';
 import { getGlyphQuads } from './symbol/SymbolQuad';
 import { packUint8ToFloat } from '../utils/compression';
+import { LightPool } from '../LightPool';
+import { TexturePool } from '../TexturePool';
+import { RenderHelper } from '../render';
+import { BatchContext } from '../renderer';
 
 enum TextVertexAttributeBufferIndex {
   INSTANCED = VertexAttributeBufferIndex.POSITION + 1,
@@ -40,8 +44,8 @@ export enum TextUniform {
   HAS_STROKE = 'u_HasStroke',
 }
 
-export class TextMesh extends Instanced {
-  private glyphManager = new GlyphManager();
+export class TextDrawcall extends Instanced {
+  private glyphManager: GlyphManager;
 
   private packedBufferObjectMap = new WeakMap<
     DisplayObject,
@@ -49,6 +53,46 @@ export class TextMesh extends Instanced {
   >();
 
   private tmpMat4 = mat4.create();
+
+  private fontHash: string;
+
+  constructor(
+    protected renderHelper: RenderHelper,
+    protected texturePool: TexturePool,
+    protected lightPool: LightPool,
+    object: DisplayObject,
+    drawcallCtors: (new (..._: any) => Instanced)[],
+    index: number,
+    context: BatchContext,
+  ) {
+    super(
+      renderHelper,
+      texturePool,
+      lightPool,
+      object,
+      drawcallCtors,
+      index,
+      context,
+    );
+    this.fontHash = this.calcFontHash(object);
+    this.glyphManager = new GlyphManager(this.context);
+  }
+
+  private calcFontHash(object: DisplayObject) {
+    const instancedAttributes = [
+      'fontSize',
+      'fontFamily',
+      'fontWeight',
+      'textBaseline',
+      'letterSpacing',
+    ];
+    return (
+      object.parsedStyle.metrics.font +
+      instancedAttributes.reduce((prev, cur) => {
+        return prev + object.parsedStyle[cur];
+      }, '')
+    );
+  }
 
   shouldMerge(object: DisplayObject, index: number) {
     const shouldMerge = super.shouldMerge(object, index);
@@ -61,30 +105,7 @@ export class TextMesh extends Instanced {
       return false;
     }
 
-    const instance = this.instance;
-    const instancedAttributes = [
-      'fontSize',
-      'fontFamily',
-      'fontWeight',
-      'textBaseline',
-      'letterSpacing',
-    ];
-
-    // fontStack & fontSize should be same
-    // if (instance.parsedStyle.fontSize !== object.parsedStyle.fontSize) {
-    //   return false;
-    // }
-
-    if (
-      instance.parsedStyle.metrics.font !== object.parsedStyle.metrics.font ||
-      instancedAttributes.some(
-        (name) => instance.parsedStyle[name] !== object.parsedStyle[name],
-      )
-    ) {
-      return false;
-    }
-
-    return true;
+    return this.fontHash === this.calcFontHash(object);
   }
 
   createGeometry(objects: DisplayObject[]): void {
@@ -116,6 +137,9 @@ export class TextMesh extends Instanced {
         linePositionY = 0;
       } else if (textBaseline === 'alphabetic') {
         linePositionY = -height + lineHeight * 0.25;
+        if (!this.context.enableCSSParsing) {
+          linePositionY = -height;
+        }
         // linePositionY = -height + fontProperties.ascent;
       } else if (textBaseline === 'ideographic') {
         linePositionY = -height;
@@ -307,7 +331,6 @@ export class TextMesh extends Instanced {
       name === 'lineHeight' ||
       name === 'wordWrap' ||
       name === 'textAlign' ||
-      name === 'visibility' ||
       name === 'dx' ||
       name === 'dy'
     ) {
@@ -323,7 +346,9 @@ export class TextMesh extends Instanced {
       name === 'strokeOpacity' ||
       name === 'opacity' ||
       name === 'lineWidth' ||
-      name === 'pointerEvents'
+      name === 'visibility' ||
+      name === 'pointerEvents' ||
+      name === 'isBillboard'
     ) {
       const vertice = this.geometry.vertices[
         TextVertexAttributeBufferIndex.INSTANCED
@@ -370,38 +395,35 @@ export class TextMesh extends Instanced {
           // @ts-ignore
           object.renderable3D?.encodedPickingColor) || [0, 0, 0];
 
-        const modelMatrix =
-          name === 'modelMatrix'
-            ? mat4.copy(this.tmpMat4, object.getWorldTransform())
-            : null;
+        const modelMatrix = mat4.copy(this.tmpMat4, object.getWorldTransform());
 
         const [start, end] = this.packedBufferObjectMap.get(object);
         const sliced = vertice.slice(start, end);
         for (let i = 0; i < end - start; i += bytes) {
-          if (name === 'modelMatrix') {
-            sliced[i + 0] = modelMatrix[0];
-            sliced[i + 1] = modelMatrix[1];
-            sliced[i + 2] = modelMatrix[2];
-            sliced[i + 3] = modelMatrix[3];
-            sliced[i + 4] = modelMatrix[4];
-            sliced[i + 5] = modelMatrix[5];
-            sliced[i + 6] = modelMatrix[6];
-            sliced[i + 7] = modelMatrix[7];
-            sliced[i + 8] = modelMatrix[8];
-            sliced[i + 9] = modelMatrix[9];
-            sliced[i + 10] = modelMatrix[10];
-            sliced[i + 11] = modelMatrix[11];
-            sliced[i + 12] = modelMatrix[12];
-            sliced[i + 13] = modelMatrix[13];
-            sliced[i + 14] = modelMatrix[14];
-            sliced[i + 15] = modelMatrix[15];
-          } else if (name === 'fill') {
-            sliced[i + 16] = packUint8ToFloat(fillColor[0], fillColor[1]);
-            sliced[i + 17] = packUint8ToFloat(fillColor[2], fillColor[3]);
-          } else if (name === 'stroke') {
-            sliced[i + 18] = packUint8ToFloat(strokeColor[0], strokeColor[1]);
-            sliced[i + 19] = packUint8ToFloat(strokeColor[2], strokeColor[3]);
-          }
+          // if (name === 'modelMatrix') {
+          sliced[i + 0] = modelMatrix[0];
+          sliced[i + 1] = modelMatrix[1];
+          sliced[i + 2] = modelMatrix[2];
+          sliced[i + 3] = modelMatrix[3];
+          sliced[i + 4] = modelMatrix[4];
+          sliced[i + 5] = modelMatrix[5];
+          sliced[i + 6] = modelMatrix[6];
+          sliced[i + 7] = modelMatrix[7];
+          sliced[i + 8] = modelMatrix[8];
+          sliced[i + 9] = modelMatrix[9];
+          sliced[i + 10] = modelMatrix[10];
+          sliced[i + 11] = modelMatrix[11];
+          sliced[i + 12] = modelMatrix[12];
+          sliced[i + 13] = modelMatrix[13];
+          sliced[i + 14] = modelMatrix[14];
+          sliced[i + 15] = modelMatrix[15];
+          // } else if (name === 'fill') {
+          sliced[i + 16] = packUint8ToFloat(fillColor[0], fillColor[1]);
+          sliced[i + 17] = packUint8ToFloat(fillColor[2], fillColor[3]);
+          // } else if (name === 'stroke') {
+          sliced[i + 18] = packUint8ToFloat(strokeColor[0], strokeColor[1]);
+          sliced[i + 19] = packUint8ToFloat(strokeColor[2], strokeColor[3]);
+          // }
           sliced[i + 20] = opacity;
           sliced[i + 21] = fillOpacity;
           sliced[i + 22] = strokeOpacity;
@@ -413,6 +435,7 @@ export class TextMesh extends Instanced {
           sliced[i + 28] = encodedPickingColor[0];
           sliced[i + 29] = encodedPickingColor[1];
           sliced[i + 30] = encodedPickingColor[2];
+          // sliced[i + 31] = object.sortable.renderOrder * RENDER_ORDER_SCALE;
         }
 
         this.geometry.updateVertexBuffer(
